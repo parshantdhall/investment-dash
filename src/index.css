@@ -1,0 +1,11 @@
+body {
+  background-color: #fff;
+}
+
+
+:root {
+  --blue: #244855;
+  --orange: #E64833;
+  --brown: #874F41;
+  --cream: #FBE9D0;
+}
