@@ -1,14 +1,37 @@
-import { Box, Card, HStack, Text, VStack } from "@chakra-ui/react"
-function StockCard() {
+import { Box, Card, HStack, Span, Spinner, Text, VStack } from "@chakra-ui/react"
+import { useAsync } from "react-use";
+import { getStockCurrentPrice } from "../lib/apis";
+import { getSymbolVal } from "../lib/utils";
+function StockCard({ stock }) {
+
+    const state = useAsync(async () => {
+        // if (stock?.symbol) {
+        //     const response = await fetch(
+        //         getStockCurrentPrice(stock?.symbol),
+        //     )
+        //     const data = await response.json()
+        //     return data["Global Quote"];
+        // }
+    }, [stock?.symbol]);
+
     return (
-        <Card.Root size="sm">
+        stock && state.loading ? (
+            <HStack p="2">
+                <Spinner size="xs" borderWidth="1px" />
+                <Span>Loading...</Span>
+            </HStack>
+        ) : state.error ? (
+            <Span p="2" color="fg.error">
+                Error fetching
+            </Span>
+        ) : (<Card.Root size="sm">
             <Card.Header>
                 <VStack align="start">
                     <Box>
-                        CBA
+                        {stock.symbol}
                     </Box>
                     <Card.Title>
-                        Common Wealth Bank
+                        {stock.company_name}
                     </Card.Title>
                 </VStack>
             </Card.Header>
@@ -19,7 +42,7 @@ function StockCard() {
                             AVG Price
                         </Text>
                         <Text>
-                            $170
+                            ${stock.purchase_price}
                         </Text>
                     </VStack>
                     <VStack >
@@ -27,7 +50,7 @@ function StockCard() {
                             Current Price
                         </Text>
                         <Text>
-                            $160
+                            ${getSymbolVal(state?.value, "price")}
                         </Text>
                     </VStack>
                     <VStack >
@@ -35,7 +58,7 @@ function StockCard() {
                             Total Stocks
                         </Text>
                         <Text>
-                            10
+                            {stock.quantity}
                         </Text>
                     </VStack>
                 </HStack>
@@ -43,15 +66,15 @@ function StockCard() {
             <Card.Footer>
                 <HStack fontSize={'xl'} width={'full'} justifyContent={'space-between'} color={'orange'}>
                     <HStack fontWeight={"semibold"}>
-                        <Text>2% | </Text>
-                        <Text>$10</Text>
+                        <Text>${((getSymbolVal(state?.value, "price") - stock.purchase_price) / stock.purchase_price) * 100}% | </Text>
+                        <Text>${getSymbolVal(state?.value, "price") - stock.purchase_price}</Text>
                     </HStack>
                     <Box fontWeight={"semibold"}>
-                        <Text>$1600</Text>
+                        <Text>${stock.purchase_price * stock.quantity}</Text>
                     </Box>
                 </HStack>
             </Card.Footer>
-        </Card.Root>
+        </Card.Root>)
     )
 }
 

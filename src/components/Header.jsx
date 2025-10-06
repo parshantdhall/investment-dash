@@ -7,10 +7,11 @@ import AddStockModal from './AddStockModal';
 
 function Header() {
     const [open, setOpen] = useState(false);
+    const [searchedStockInfo, setSearchedStockInfo] = useState(null);
 
     const handleAddStock = (val) => {
         if (val) {
-            console.log(val)
+            setSearchedStockInfo(val);
             handleOpenClose(true);
         }
     }
@@ -36,7 +37,7 @@ function Header() {
                     <Search handleAddStock={handleAddStock} />
                 </div>
             </header>
-            <AddStockModal open={open} handleOpenClose={handleOpenClose} />
+            <AddStockModal open={open} handleOpenClose={handleOpenClose} data={searchedStockInfo} />
         </>
     )
 }

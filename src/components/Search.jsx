@@ -8,6 +8,7 @@ import {
 } from "@chakra-ui/react"
 import { useState } from "react"
 import { useAsync } from "react-use"
+import { getSearchEndpoint } from "../lib/apis"
 
 
 const example =
@@ -122,14 +123,9 @@ const example =
             "8. currency": "USD",
             "9. matchScore": "0.5000"
         }
-    ]
-
+    ];
 
 const Search = ({ handleAddStock }) => {
-
-    const getSearchEndpoint = (inputValue) => {
-        return `https://www.alphavantage.co/query?function=SYMBOL_SEARCH&keywords=${inputValue}&apikey=E1DLEWXLFMY4K0H8`;
-    }
 
     const [inputValue, setInputValue] = useState("")
 
