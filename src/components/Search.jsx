@@ -9,7 +9,123 @@ import {
 import { useState } from "react"
 import { useAsync } from "react-use"
 
-const Search = () => {
+
+const example =
+    [
+        {
+            "1. symbol": "BC",
+            "2. name": "Brunswick Corp",
+            "3. type": "Equity",
+            "4. region": "United States",
+            "5. marketOpen": "09:30",
+            "6. marketClose": "16:00",
+            "7. timezone": "UTC-04",
+            "8. currency": "USD",
+            "9. matchScore": "1.0000"
+        },
+        {
+            "1. symbol": "BC88.LON",
+            "2. name": "BC88",
+            "3. type": "Equity",
+            "4. region": "United Kingdom",
+            "5. marketOpen": "08:00",
+            "6. marketClose": "16:30",
+            "7. timezone": "UTC+01",
+            "8. currency": "GBX",
+            "9. matchScore": "0.6667"
+        },
+        {
+            "1. symbol": "BC0.FRK",
+            "2. name": "Boise Cascade Company",
+            "3. type": "Equity",
+            "4. region": "Frankfurt",
+            "5. marketOpen": "08:00",
+            "6. marketClose": "20:00",
+            "7. timezone": "UTC+02",
+            "8. currency": "EUR",
+            "9. matchScore": "0.5714"
+        },
+        {
+            "1. symbol": "BC3.FRK",
+            "2. name": "BCI Minerals Limited",
+            "3. type": "Equity",
+            "4. region": "Frankfurt",
+            "5. marketOpen": "08:00",
+            "6. marketClose": "20:00",
+            "7. timezone": "UTC+02",
+            "8. currency": "EUR",
+            "9. matchScore": "0.5714"
+        },
+        {
+            "1. symbol": "BC7.FRK",
+            "2. name": "BLOCKCHAIN GRP SA EO-04",
+            "3. type": "Equity",
+            "4. region": "Frankfurt",
+            "5. marketOpen": "08:00",
+            "6. marketClose": "20:00",
+            "7. timezone": "UTC+02",
+            "8. currency": "EUR",
+            "9. matchScore": "0.5714"
+        },
+        {
+            "1. symbol": "BC8.FRK",
+            "2. name": "Bechtle AG",
+            "3. type": "Equity",
+            "4. region": "Frankfurt",
+            "5. marketOpen": "08:00",
+            "6. marketClose": "20:00",
+            "7. timezone": "UTC+02",
+            "8. currency": "EUR",
+            "9. matchScore": "0.5714"
+        },
+        {
+            "1. symbol": "BC1P.FRK",
+            "2. name": "Barco NV",
+            "3. type": "Equity",
+            "4. region": "Frankfurt",
+            "5. marketOpen": "08:00",
+            "6. marketClose": "20:00",
+            "7. timezone": "UTC+02",
+            "8. currency": "EUR",
+            "9. matchScore": "0.5000"
+        },
+        {
+            "1. symbol": "BC51.FRK",
+            "2. name": "Bolsa Mexicana de Valores S.A.B. de C.V",
+            "3. type": "Equity",
+            "4. region": "Frankfurt",
+            "5. marketOpen": "08:00",
+            "6. marketClose": "20:00",
+            "7. timezone": "UTC+02",
+            "8. currency": "EUR",
+            "9. matchScore": "0.5000"
+        },
+        {
+            "1. symbol": "BC8.DEX",
+            "2. name": "Bechtle AG",
+            "3. type": "Equity",
+            "4. region": "XETRA",
+            "5. marketOpen": "08:00",
+            "6. marketClose": "20:00",
+            "7. timezone": "UTC+02",
+            "8. currency": "EUR",
+            "9. matchScore": "0.5000"
+        },
+        {
+            "1. symbol": "BC94.LON",
+            "2. name": "Samsung Electronics Co. Ltd",
+            "3. type": "Equity",
+            "4. region": "United Kingdom",
+            "5. marketOpen": "08:00",
+            "6. marketClose": "16:30",
+            "7. timezone": "UTC+01",
+            "8. currency": "USD",
+            "9. matchScore": "0.5000"
+        }
+    ]
+
+
+const Search = ({ handleAddStock }) => {
 
     const getSearchEndpoint = (inputValue) => {
         return `https://www.alphavantage.co/query?function=SYMBOL_SEARCH&keywords=${inputValue}&apikey=E1DLEWXLFMY4K0H8`;
@@ -19,22 +135,24 @@ const Search = () => {
 
     const { collection, set } = useListCollection({
         initialItems: [],
-
+        itemToString: (item) => item["1. symbol"],
+        itemToValue: (item) => item,
     })
 
     const state = useAsync(async () => {
         if (inputValue && inputValue != '') {
-            const response = await fetch(
-                getSearchEndpoint(inputValue),
-            )
-            const data = await response.json()
-            console.log(data)
-            set(data.bestMatches)
+            // const response = await fetch(
+            //     getSearchEndpoint(inputValue),
+            // )
+            // const data = await response.json()
+            // set(data.bestMatches)
+            set(example)
+
         }
     }, [inputValue, set]);
 
     const handleOnSelect = (e) => {
-        console.log(e.itemValue);
+        handleAddStock(e.itemValue);
     }
 
     return (
@@ -49,9 +167,9 @@ const Search = () => {
         >
 
             <Combobox.Control>
-                <Combobox.Input placeholder="Add Stock" _placeholder={{ color: "white" }} />
+                <Combobox.Input placeholder="Add Stock" _placeholder={{ color: "white" }} caretColor={"white"} />
                 <Combobox.IndicatorGroup>
-                    <Combobox.ClearTrigger />
+                    <Combobox.ClearTrigger color={"white"} />
                     <Combobox.Trigger />
                 </Combobox.IndicatorGroup>
             </Combobox.Control>
@@ -69,14 +187,17 @@ const Search = () => {
                                 Error fetching
                             </Span>
                         ) : (
-                            collection.items?.map((symbol) => (
-                                <Combobox.Item key={symbol.name} item={symbol}>
+                            collection.items?.map((item) => (
+                                <Combobox.Item key={item['1. symbol']} item={item} _hover={{ bg: "bg.subtle" }}>
                                     <HStack justify="space-between" textStyle="sm">
                                         <Span fontWeight="medium" truncate>
-                                            {symbol.name}
+                                            {item['1. symbol']}
                                         </Span>
                                         <Span color="fg.muted" truncate>
-                                            {symbol.symbol} / {symbol.name}
+                                            {item['2. name']}
+                                        </Span>
+                                        <Span color="orange" fontWeight={'semibold'}>
+                                            {item['4. region']}
                                         </Span>
                                     </HStack>
                                     <Combobox.ItemIndicator />
